@@ -1,0 +1,20 @@
+{
+  "name": "git-hooks-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "git config core.hooksPath ./git-hooks",
+    "lint": "eslint . --ext .js --quiet",
+    "lint-and-fix": "eslint . --ext .js --quiet --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "prettier": "^2.2.1"
+  }
+}
