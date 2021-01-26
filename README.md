@@ -23,7 +23,7 @@ npm install
 
 To check does `pre-commit` hook works you can do one of the following and then run `git-commit` to trigger this hook:
  - use `let` for variables which can be `const` → it should be changed into `const` automatically,
- - use `""` (double quote) for any text → it should be changed into `''`(double quote) automatically,
+ - use `""` (double quote) for any text → it should be changed into `''`(single quote) automatically,
  - do not use `;` (semicolon) at the end of the line → `;` (semicolon) should be added at the end of each line automatically
 
 >You can change already prepared `index.js` file
