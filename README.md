@@ -23,6 +23,8 @@ npm install
 
 ## How to test
 
+### Checking code quality on commit
+
 To check does `pre-commit` hook works, you can do one of the following and then run `git-commit` to trigger this hook:
 
 - use `let` for variables which can be `const` → it should be changed into `const` automatically,
@@ -39,3 +41,26 @@ To check does `pre-commit` hook works, you can do one of the following and then 
   ```
 
 > You can change already prepared `index.js` `index.spec.js` and `index.css` files
+
+### Checking issue id with commit linking
+
+Create a branch that starts with issue number, for example: For
+issue ***[example issue #6](https://github.com/kaczor6418/git-hooks-example/issues/6)*** you will need to create a
+branch that starts with number 6.
+
+```bash
+git branch 6-example issue
+```
+
+Then `git checkout` on this branch make any changes that fulfill eslint and stylelint and commit your changes.
+Print `git log`. You should see a message at the end of your commit with attached issue number.
+
+```
+commit bbff505037ce2bef4f4d17f2c12c718a587cdf02
+Author: Krzysztof Kaczyński
+Date:   Mon Dec 5 13:01:02 2022 +0100
+
+    chore: example with issue linking
+    
+    Related work item: GH-6
+```
