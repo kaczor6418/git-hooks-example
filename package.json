@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "git config core.hooksPath ./git-hooks",
-    "lint": "eslint . --ext .js --quiet",
-    "lint-and-fix": "eslint . --ext .js --quiet --fix"
+    "lint-js": "eslint . --ext .js --quiet",
+    "lint-js:fix": "eslint . --ext .js --quiet --fix",
+    "lint-scss": "stylelint **/*.css",
+    "lint-scss:fix": "stylelint **/*.css --fix"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,8 @@
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.0"
+    "prettier": "^2.8.0",
+    "stylelint": "^14.16.0",
+    "stylelint-config-standard": "^29.0.0"
   }
 }

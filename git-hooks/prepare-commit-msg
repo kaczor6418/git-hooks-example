@@ -1,0 +1,8 @@
+#!/bin/bash
+COMMIT_MSG_FILE=$1
+issue_id=$(git symbolic-ref --short HEAD | grep -o '^[[:digit:]]*')
+cat $COMMIT_MSG_FILE | grep -q GH-$issue_id
+if [ $? = 1 ] && [[ -n "${issue_id// /}" ]]; then
+  echo >>$COMMIT_MSG_FILE
+  echo "Related work item: GH-$issue_id" >>$COMMIT_MSG_FILE
+fi
