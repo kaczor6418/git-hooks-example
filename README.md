@@ -10,7 +10,7 @@ Husky***](https://dev.to/krzysztofkaczy9/do-you-really-need-husky-247b) article.
 
 ## Set up
 
-To use this repository you will need `node.js`, `npm` and `git`. If you have it, then you can run those command in
+To use this repository, you will need `node.js`, `npm` and `git`. If you have it, then you can run those command in
 your `terminal` / `git-bash` / `cmd` / `power-shell`.
 
 ```bash
@@ -23,11 +23,19 @@ npm install
 
 ## How to test
 
-To check does `pre-commit` hook works you can do one of the following and then run `git-commit` to trigger this hook:
+To check does `pre-commit` hook works, you can do one of the following and then run `git-commit` to trigger this hook:
 
 - use `let` for variables which can be `const` → it should be changed into `const` automatically,
 - use `""` (double quote) for any text → it should be changed into `''`(single quote) automatically,
 - do not use `;` (semicolon) at the end of the line → `;` (semicolon) should be added at the end of each line
   automatically
+- add css property that doesn't exist, for example `dupa: 12` → stylelint should fail cause not existing css property
+  what will cause commit failure
+- add tests that are not passing → tests should fail what will cause commit failure
+  ```javascript
+  it('should fail', function () {
+    expect(0).toBe(1);
+  });
+  ```
 
-> You can change already prepared `index.js` file
+> You can change already prepared `index.js` `index.spec.js` and `index.css` files
