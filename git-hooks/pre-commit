@@ -4,52 +4,46 @@ GREEN="\033[1;32m"
 NC="\033[0m"
 
 function remove_last_char_if_not_empty() {
-	container=("$@")
-	if [[ -n "$container" ]]
-	then
-		container=${container::-1}
-	fi
-	echo "$container"
+  container=("$@")
+  if [[ -n "$container" ]]; then
+    container=${container::-1}
+  fi
+  echo "$container"
 }
 
 function create_pattern() {
-    files_paths_list=("$@")
-    pattern=""
-    for file_name in $files_paths_list
-    do
-        pattern="${pattern}${file_name}|"
-    done
-    pattern=$(remove_last_char_if_not_empty "${pattern[*]}")
-    echo "$pattern"
+  files_paths_list=("$@")
+  pattern=""
+  for file_name in $files_paths_list; do
+    pattern="${pattern}${file_name}|"
+  done
+  pattern=$(remove_last_char_if_not_empty "${pattern[*]}")
+  echo "$pattern"
 }
 
 function filter_array_with_inverted_regEx() {
-	files_paths_list=("$@")
-	query=$2
-	container=""
-	if [[ -z "${query}" ]]
-    then
-        container=$files_paths_list
-	else
-        for value in $files_paths_list
-        do
-            matched_string=$(echo "$value" | grep -v -E "$query")
-            if [[ -n "$matched_string" ]]
-            then
-                container="${container}${value} "
-            fi
-        done
-        container=$(remove_last_char_if_not_empty "${container[*]}")
-    fi
-	echo "$container"
+  files_paths_list=("$@")
+  query=$2
+  container=""
+  if [[ -z "${query}" ]]; then
+    container=$files_paths_list
+  else
+    for value in $files_paths_list; do
+      matched_string=$(echo "$value" | grep -v -E "$query")
+      if [[ -n "$matched_string" ]]; then
+        container="${container}${value} "
+      fi
+    done
+    container=$(remove_last_char_if_not_empty "${container[*]}")
+  fi
+  echo "$container"
 }
 
 function add_files_to_staged_tree() {
-	files_paths=("$@")
-		if [[ -n "${files_paths// }" ]]
-    then
-        git add $files_paths
-    fi
+  files_paths=("$@")
+  if [[ -n "${files_paths// /}" ]]; then
+    git add $files_paths
+  fi
 }
 
 eslint_autofix_flag=""
@@ -58,6 +52,7 @@ ends_with_js_or_jsx=".*\.jsx?$"
 ends_with_css=".*\.css$"
 eslint_exit_code=0
 stylelint_exit_code=0
+jest_exit_code=0
 not_staged_js_jsx_files=$(git diff --diff-filter=b --name-only | grep -E "$ends_with_js_or_jsx")
 not_staged_css_files=$(git diff --diff-filter=b --name-only | grep -E "$ends_with_css")
 staged_js_jsx_files=$(git diff --cached --diff-filter=d --name-only | grep -E "$ends_with_js_or_jsx")
@@ -67,32 +62,33 @@ css_filter_regex=$(create_pattern "${not_staged_css_files[*]}")
 js_jsx_files_to_add_after_linting=$(filter_array_with_inverted_regEx "${staged_js_jsx_files[*]}" "${js_jsx_filter_regex}")
 css_files_to_add_after_linting=$(filter_array_with_inverted_regEx "${staged_css_files[*]}" "${css_filter_regex}")
 
-if [ ${#js_jsx_files_to_add_after_linting} = ${#staged_js_jsx_files} ]
-then
-	eslint_autofix_flag="--fix"
+if [ ${#js_jsx_files_to_add_after_linting} = ${#staged_js_jsx_files} ]; then
+  eslint_autofix_flag="--fix"
 fi
-if [ ${#css_files_to_add_after_linting} = ${#staged_css_files} ]
-then
-	stylelint_autofix_flag="--fix"
+if [ ${#css_files_to_add_after_linting} = ${#staged_css_files} ]; then
+  stylelint_autofix_flag="--fix"
 fi
-if [[ -n "$staged_js_jsx_files" ]]
-then
-    echo "Running ESLint..."
-    ./node_modules/.bin/eslint $staged_js_jsx_files --quiet $eslint_autofix_flag
-    eslint_exit_code=$?
+if [[ -n "$staged_js_jsx_files" ]]; then
+  echo "Running ESLint..."
+  ./node_modules/.bin/eslint $staged_js_jsx_files --quiet $eslint_autofix_flag
+  eslint_exit_code=$?
+  echo "Running Tests..."
+  ./node_modules/.bin/jest
+  jest_exit_code=$?
+  if [ $jest_exit_code = 0 ]; then
+    echo -e "${GREEN} ✔ All tests passed' ${NC}"
+  fi
 fi
-if [[ -n "$staged_css_files" ]]
-then
-    echo "Running Stylelint..."
-    ./node_modules/.bin/stylelint $staged_css_files --stdin --quiet $stylelint_autofix_flag
-    stylelint_exit_code=$?
+if [[ -n "$staged_css_files" ]]; then
+  echo "Running Stylelint..."
+  ./node_modules/.bin/stylelint $staged_css_files --stdin --quiet $stylelint_autofix_flag
+  stylelint_exit_code=$?
 fi
-if [ $eslint_exit_code = 0 ] && [ $stylelint_exit_code = 0 ]
-then
-    add_files_to_staged_tree "${js_jsx_files_to_add_after_linting[*]} ${css_files_to_add_after_linting[*]}"
-    echo -e "${GREEN} ✔ Committed successfully *^____^* ${NC}"
-    exit
+if [ $eslint_exit_code = 0 ] && [ $stylelint_exit_code = 0 ] && [ $jest_exit_code = 0 ]; then
+  add_files_to_staged_tree "${js_jsx_files_to_add_after_linting[*]} ${css_files_to_add_after_linting[*]}"
+  echo -e "${GREEN} ✔ Committed successfully *^____^* ${NC}"
+  exit
 else
-    echo -e "${RED} ❌ Couldn't commit changes dues to above errors ＞﹏＜ ${NC}"
-    exit 1
+  echo -e "${RED} ❌ Couldn't commit changes dues to above errors ＞﹏＜ ${NC}"
+  exit 1
 fi
