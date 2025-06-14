@@ -17,4 +17,7 @@ describe(sum.name, () => {
 
     expect(result).toBe(expectedSum);
   });
+  it('should fail', () => {
+    expect(0).toBe(1);
+  });
 });
