@@ -87,7 +87,7 @@ fi
 if [ $eslint_exit_code = 0 ] && [ $stylelint_exit_code = 0 ] && [ $jest_exit_code = 0 ]; then
   add_files_to_staged_tree "${js_jsx_files_to_add_after_linting[*]} ${css_files_to_add_after_linting[*]}"
   echo -e "${GREEN} ✔ Committed successfully *^____^* ${NC}"
-  exit
+  exit 0
 else
   echo -e "${RED} ❌ Couldn't commit changes dues to above errors ＞﹏＜ ${NC}"
   exit 1
